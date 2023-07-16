@@ -13,6 +13,7 @@ const request = axios.create({
   headers: { 'Content-Type': 'application/json;charset=utf-8' }
 });
 
+
 // 请求拦截器
 request.interceptors.request.use(
   (request: AxiosRequestConfig) => {
@@ -41,7 +42,7 @@ request.interceptors.response.use(
       return response;
     } else {
       ElMessage({
-        message: '系统出错',
+        message: '出错',
         type: 'error'
       });
       return Promise.reject(new Error( statusText));

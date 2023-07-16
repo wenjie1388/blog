@@ -6,10 +6,16 @@ from django.contrib.auth.models import AbstractBaseUser, UserManager
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils import timezone
 
+from A_blogProject.utils import get_RandomString
+
+
+def user_img_path(instance, filename):
+    return "users/{0}/{1}{2}".format(instance.course.id, get_RandomString(24), filename)
+
 
 class Consumer(AbstractBaseUser):
     username_validator = UnicodeUsernameValidator()
-
+    cellphone = models.CharField(_("cellphone"), max_length=150, unique=True)
     username = models.CharField(
         _("username"),
         max_length=150,
@@ -24,7 +30,12 @@ class Consumer(AbstractBaseUser):
     )
     first_name = models.CharField(_("first name"), max_length=150, blank=True)
     last_name = models.CharField(_("last name"), max_length=150, blank=True)
-    email = models.EmailField(_("email address"), blank=True)
+    email = models.EmailField(_("email address"), unique=True, blank=True, null=True)
+    avarte = models.ImageField(
+        _("avarte"),
+        upload_to=user_img_path,
+        default="image/default/E23A1F.jpg",
+    )
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,

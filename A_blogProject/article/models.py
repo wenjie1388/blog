@@ -7,7 +7,9 @@ from A_blogProject.utils import get_RandomString
 
 
 def article_img_path(instance, filename):
-    return "article/{0}/{1}{2}".format(instance.author, get_RandomString(24), filename)
+    return "/image/article/{0}/{1}{2}".format(
+        instance.id, get_RandomString(24), filename
+    )
 
 
 # from users.models import AnyUser as User
@@ -22,17 +24,18 @@ from django.contrib.auth.hashers import make_password, check_password
 # 文章
 class Article(models.Model):
     STATUS = [
-        ("original", "原创"),
-        ("draft", "草稿"),
-        ("reship", "转载"),
+        ("or", "原创"),
+        ("dr", "草稿"),
     ]
-    title = models.CharField(max_length=64)
+    title = models.CharField(max_length=64, default="无标题")
     digest = models.TextField(max_length=128)
     cover = models.ImageField(
         upload_to=article_img_path, default="article/default/default.png"
     )
     body = models.TextField()
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, to_field="username")
+    author = models.ForeignKey(
+        Author, on_delete=models.CASCADE, to_field="username", db_column="author"
+    )
     date_create = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
 
@@ -56,13 +59,13 @@ class Article(models.Model):
     # tui = models.ForeignKey(Tui, on_delete=models.DO_NOTHING, verbose_name='推荐位', blank=True, null=True)
 
     class Meta:
-        db_table = "article"
+        db_table = "t_article"
         ordering = ("id", "author", "date_create")
-        verbose_name = "article"
-        verbose_name_plural = "articles"
+        verbose_name = "t_article"
+        verbose_name_plural = "t_articles"
 
-    def __str__(self):
-        return f"{self.id}:{self.title}:{self.user}"
+    def __str__(self) -> str:
+        return super().__str__()
 
 
 class Original(models.Model):
@@ -75,7 +78,6 @@ class Original(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, to_field="username")
     date_create = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
-
     tags = models.JSONField(
         "标签",
     )
@@ -92,24 +94,10 @@ class Original(models.Model):
     # tui = models.ForeignKey(Tui, on_delete=models.DO_NOTHING, verbose_name='推荐位', blank=True, null=True)
 
     class Meta:
-        db_table = "Original"
+        db_table = "t_original"
         ordering = ("id", "author")
-        verbose_name = "Original"
-        verbose_name_plural = "Originals"
+        verbose_name = "t_original"
+        verbose_name_plural = "t_originals"
 
     def __str__(self):
         return f"{self.title}:{self.author}"
-
-
-class Draft(models.Model):
-    title = models.CharField(max_length=64)
-    body = models.TextField()
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, to_field="username")
-    date_create = models.DateTimeField(auto_now_add=True)
-    date_update = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        db_table = "t_draft"
-        ordering = ("id", "author", "date_create")
-        verbose_name = "t_draft"
-        verbose_name_plural = "t_drafts"

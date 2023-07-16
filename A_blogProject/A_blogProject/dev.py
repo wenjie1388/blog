@@ -1,6 +1,6 @@
 # 开发环境
 
-DEBUG__ = True
+DEBUG_ = True
 
 
 MYSQLNAME = "testDjango"

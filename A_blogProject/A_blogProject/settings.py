@@ -1,4 +1,6 @@
+import os
 from pathlib import Path
+from .dev import DEBUG_, REDIS1_LOCATION, REDIS0_LOCATION
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-ctc$6quh7wt_*dz&r#p!@#g)=1cs4f3bqr2%w^50^43fgz1g!7"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = DEBUG_
 
 ALLOWED_HOSTS = []
 
@@ -27,16 +29,18 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "article.apps.ArticleConfig",
     "consumer.apps.ConsumerConfig",
+    "auths.apps.AuthsConfig",
     "rest_framework",
 ]
 
+
 MIDDLEWARE = [
     # 跨域中间件
-    "corsheaders.middleware.CorsMiddleware",
+    # "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    # "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -110,6 +114,11 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+# 文件和图片上传配置
+MEDIA_ROOT = os.path.join(BASE_DIR, "../upload")
+MEDIA_URL = "/media/"
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
@@ -120,9 +129,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # ******************** 跨域配置 ******************** #
 # *===============================================* #
 
-CORS_ALLOW_CREDENTIALS = True  # 允许携带cookies
-CORS_ORIGIN_ALLOW_ALL = True
-
+# CORS_ALLOW_CREDENTIALS = True  # 允许携带cookies
+# CORS_ORIGIN_ALLOW_ALL = True
+#
 # 跨域白名单
 # CORS_ORIGIN_WHITELIST = [
 #     '127.0.0.1:5173',
@@ -130,29 +139,29 @@ CORS_ORIGIN_ALLOW_ALL = True
 # ]
 
 
-CORS_ORIGIN_WHITELIST = ()
-# 对应的发送的请求的跨域
-CORS_ALLOW_METHODS = (
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-    "VIEW",
-)
+# CORS_ORIGIN_WHITELIST = ()
+# # 对应的发送的请求的跨域
+# CORS_ALLOW_METHODS = (
+#     "DELETE",
+#     "GET",
+#     "OPTIONS",
+#     "PATCH",
+#     "POST",
+#     "PUT",
+#     "VIEW",
+# )
 
-CORS_ALLOW_HEADERS = (
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-)
+# CORS_ALLOW_HEADERS = (
+#     "accept",
+#     "accept-encoding",
+#     "authorization",
+#     "content-type",
+#     "dnt",
+#     "origin",
+#     "user-agent",
+#     "x-csrftoken",
+#     "x-requested-with",
+# )
 
 
 # =============================================== #
@@ -220,6 +229,37 @@ LOGGING = {
             "handlers": ["console", "mail_admins"],
             "level": "INFO",
             # 'filters': ['special']
+        },
+    },
+}
+
+
+# =============================================== #
+# **************** DRF 配置 ***************** #
+# =============================================== #
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ),
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+}
+
+# ============================================== #
+# **************** Caches 配置 ***************** #
+# =============================================== #
+
+CACHES = {
+    "default": {
+        # "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS0_LOCATION,
+        "OPTIONS": {
+            "db": "10",
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            # "parser_class": "redis.connection.PythonParser",
+            # "pool_class": "redis.BlockingConnectionPool",
         },
     },
 }
