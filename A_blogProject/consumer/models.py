@@ -10,7 +10,7 @@ from A_blogProject.utils import get_RandomString
 
 
 def user_img_path(instance, filename):
-    return "users/{0}/{1}{2}".format(instance.course.id, get_RandomString(24), filename)
+    return "image/{0}/{1}{2}".format(instance.course.id, get_RandomString(24), filename)
 
 
 class Consumer(AbstractBaseUser):
