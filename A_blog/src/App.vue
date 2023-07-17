@@ -7,13 +7,13 @@ import Card_one from '@/components/user/Card_one.vue';
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <img alt="Vue logo" class="logo" src="@/assets/微信头像.jpg" width="125" height="125" />
 
     <div class="wrapper">
       <Card_one />
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/">首页</RouterLink>
+        <RouterLink to="/about">关于我</RouterLink>
       </nav>
     </div>
   </header>

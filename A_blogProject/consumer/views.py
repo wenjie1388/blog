@@ -87,7 +87,8 @@ class UserModelViewSet(ModelViewSet):
 
 
 class UserLoginView(APIView):
-    authentication_classes = (SessionAuthentication,)
+    # authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAnonymousUser,)
 
     def get(self, request, *args, **kwargs):
