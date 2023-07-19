@@ -1,24 +1,25 @@
 from django.db.models import Q
 from django.conf import settings
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .models import Article
 from .serializer import ArticleModelSerializer
 from A_blogProject.utils import Timmer
-from auths.permissions import AllowAny, IsAuthenticated
+
 from auths.authentication import SessionAuthentication
+from auths.permissions import IsOwnerOrReadOnly
+from auths.pagination import PageNumberPagination
 
 
 class ArticleModelViewset(ModelViewSet):
-    # queryset = Article.objects.all()
+    queryset = Article.objects.all()
     serializer_class = ArticleModelSerializer
-    authentication_classes = [SessionAuthentication]
-    # authentication_classes = [BasicAuthentication, SessionAuthentication]
-    # permission_classes = (IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+    pagination_class = PageNumberPagination
+    permission_classes = (IsOwnerOrReadOnly,)
 
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -36,7 +37,7 @@ class ArticleModelViewset(ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = Article.objects.all()
+        queryset = self.queryset
         search = self.request.query_params.get("search", None)
         # tags = self.request.query_params.get("tags", None)
         status = self.request.query_params.get("status", None)
@@ -53,31 +54,15 @@ class ArticleModelViewset(ModelViewSet):
             )
         if status is not None:
             queryset = queryset.filter(status__exact=status)
-        # return queryset[page * PAGE_SIZE - PAGE_SIZE : page * PAGE_SIZE]
         return queryset.order_by(order1)
 
     def get_permissions(self):
-        if self.request.method in ["get", "post"]:
-            return AllowAny
-        else:
-            return IsAuthenticated
+        if self.request.method in permissions.SAFE_METHODS:
+            return (AllowAny,)
+
+        return (IsAuthenticated,)
 
         # return super().get_permissions()
 
     def get_serializer_class(self):
         return super().get_serializer_class()
-
-    # @Timmer
-    # def get_action(self):
-    #     action_dict = {
-    #         "020101": {
-    #             "queryset": Article.objects.all,
-    #             "serializer_class": ArticleModelSerializer,
-    #             # permission_classes = (IsAdminUser,)
-    #         },
-    #         "020102": {
-    #             "queryset": Article.objects.all,
-    #             "serializer_class": ArticleModelSerializer,
-    #             # permission_classes = (IsAdminUser,)
-    #         }
-    #     }

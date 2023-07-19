@@ -1,7 +1,26 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router';
-import Card_one from '@/components/user/Card_one.vue';
+// import Card_one from '@/components/user/Card_one.vue';
+import { getUserInfo1Api } from '@/api/user'
 
+var user = ref({
+  username: '',
+  email: ''
+
+})
+
+async function initUser() {
+  const params = {}
+  getUserInfo1Api('v1', 4, params)
+    .then((res) => {
+      user = res.data
+    })
+}
+
+onMounted(() => {
+  initUser()
+})
 
 </script>
 
@@ -10,7 +29,8 @@ import Card_one from '@/components/user/Card_one.vue';
     <img alt="Vue logo" class="logo" src="@/assets/微信头像.jpg" width="125" height="125" />
 
     <div class="wrapper">
-      <Card_one />
+      <span>{{ user.username }}</span>
+      <span>{{ user.email }}</span>
       <nav>
         <RouterLink to="/">首页</RouterLink>
         <RouterLink to="/about">关于我</RouterLink>

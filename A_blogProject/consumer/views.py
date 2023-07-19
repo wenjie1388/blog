@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.contrib.auth import authenticate, login, logout
+from django.db.models.query import QuerySet
 
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
@@ -8,9 +9,9 @@ from rest_framework.decorators import api_view
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import (
-    IsAuthenticated,
+    # IsAuthenticated,
     IsAdminUser,
-    # AllowAny,
+    AllowAny,
     IsAuthenticatedOrReadOnly,
 )
 from rest_framework import status as status_
@@ -18,8 +19,9 @@ from rest_framework import status as status_
 import django_redis
 import logging
 
-from auths.permissions import IsAnonymousUser, AllowAny, IsAuthenticated
+from auths.permissions import IsAnonymousUser, IsOwnerOrReadOnly
 from auths.authentication import SessionAuthentication, TokenAuthentication
+from auths.pagination import PageNumberPagination
 from auths.models import Token
 from .models import Consumer as User
 from .serializer import UserLoginSerializer, UserModelSerializer, UserCreateSerializer
@@ -37,6 +39,8 @@ def create_token(sender, instance, created=False, **kwargs):
 class UserModelViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
+    pagination_class = PageNumberPagination
     lookup_field = "id"
 
     def list(self, request, *args, **kwargs):
@@ -63,13 +67,31 @@ class UserModelViewSet(ModelViewSet):
         )
 
     def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
+        query_params = request.query_params.dict()
+        instance = self.get_object()
+        # serializer = self.get_serializer(instance)
+        data = {a: getattr(instance, a) for a in query_params}
+        return Response(data, status=status_.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         return Response(status=status_.HTTP_204_NO_CONTENT)
 
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
+
+    def get_object(self):
+        return super().get_object()
+
+    def get_queryset(self):
+        queryset = self.queryset
+        if isinstance(queryset, QuerySet):
+            # Ensure queryset is re-evaluated on each request.
+            queryset = queryset.all()
+        query_params = self.request.query_params.dict()
+        query = {key + "__icontains": value for key, value in query_params.items()}
+        if query_params:
+            queryset = queryset.filter(**query)
+        return queryset
 
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -80,10 +102,7 @@ class UserModelViewSet(ModelViewSet):
         return super().get_authenticators()
 
     def get_permissions(self):
-        if self.request.method in ["POST", "GET"]:
-            return AllowAny
-        else:
-            return IsAuthenticated
+        return super().get_permissions()
 
 
 class UserLoginView(APIView):
@@ -127,7 +146,7 @@ class UserLoginView(APIView):
 
 class UserLogoutView(APIView):
     authentication_classes = (SessionAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsOwnerOrReadOnly,)
 
     def get(self, request, id=None, *args, **kwargs):
         request.session.flush()

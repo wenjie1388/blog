@@ -22,12 +22,20 @@ const props = defineProps({
   msg: String,
 
 })
-
-
-// const {} = toRef(props);
-
-// console.log(article)
 </script>
 
 
-<style scoped></style>
+<style lang="scss" >
+.el-card {
+
+
+  .el-card__header {
+    padding: calc(var(--el-card-padding) - 2px) var(--el-card-padding);
+    border-bottom: 1px solid var(--el-card-border-color);
+    box-sizing: border-box;
+  }
+
+  .el-card__body {}
+
+}
+</style>
