@@ -31,12 +31,13 @@ INSTALLED_APPS = [
     "consumer.apps.ConsumerConfig",
     "auths.apps.AuthsConfig",
     "rest_framework",
+    "corsheaders",
 ]
 
 
 MIDDLEWARE = [
     # 跨域中间件
-    # "corsheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -129,39 +130,39 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # ******************** 跨域配置 ******************** #
 # *===============================================* #
 
-# CORS_ALLOW_CREDENTIALS = True  # 允许携带cookies
-# CORS_ORIGIN_ALLOW_ALL = True
-#
+CORS_ALLOW_CREDENTIALS = True  # 允许携带cookies
+CORS_ORIGIN_ALLOW_ALL = True
+
 # 跨域白名单
-# CORS_ORIGIN_WHITELIST = [
-#     '127.0.0.1:5173',
-#     '127.0.0.1:8000',
-# ]
+CORS_ORIGIN_WHITELIST = [
+    "127.0.0.1:5173",
+    "127.0.0.1:8000",
+]
 
 
-# CORS_ORIGIN_WHITELIST = ()
-# # 对应的发送的请求的跨域
-# CORS_ALLOW_METHODS = (
-#     "DELETE",
-#     "GET",
-#     "OPTIONS",
-#     "PATCH",
-#     "POST",
-#     "PUT",
-#     "VIEW",
-# )
+CORS_ORIGIN_WHITELIST = ()
+# 对应的发送的请求的跨域
+CORS_ALLOW_METHODS = (
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+    "VIEW",
+)
 
-# CORS_ALLOW_HEADERS = (
-#     "accept",
-#     "accept-encoding",
-#     "authorization",
-#     "content-type",
-#     "dnt",
-#     "origin",
-#     "user-agent",
-#     "x-csrftoken",
-#     "x-requested-with",
-# )
+CORS_ALLOW_HEADERS = (
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+)
 
 
 # =============================================== #

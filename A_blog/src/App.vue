@@ -1,106 +1,61 @@
+<template>
+  <el-container>
+    <el-header style="width: 100%">
+      <el-menu :default-active="appStore.menu" class="el-menu-demo" mode="horizontal" :ellipsis="false"
+        @select="handleSelect">
+        <div class="logo-box" style="display: flex; margin: auto 0">
+          <h3>LOGO</h3>
+          <!-- <el-image style="width: 100px; height: 58px;display: flex;"
+            src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg" fit="contain" /> -->
+        </div>
+        <el-menu-item index="/">首页</el-menu-item>
+        <div class="flex-grow" style="display: flex">
+          <!-- <el-input v-model.trim="search" size="large" @keyup.enter.native="toSearch()" placeholder="Please Input"
+            :suffix-icon="Search" /> -->
+        </div>
+      </el-menu>
+    </el-header>
+    <el-main style="width: 100%; background: #fafafa; height: 100%; min-height: 1080px">
+      <RouterView />
+    </el-main>
+    <div style="width: 100%; text-align: center">
+      <router-link class="user-box" to="login">登录</router-link>
+    </div>
+  </el-container>
+</template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { RouterLink, RouterView } from 'vue-router';
-// import Card_one from '@/components/user/Card_one.vue';
-import { getUserInfo1Api } from '@/api/user'
+// 系统依赖
+import { ref, onMounted, onUpdated, reactive } from "vue";
+import { Search } from "@element-plus/icons-vue";
+import { RouterLink, RouterView } from "vue-router";
 
-var user = ref({
-  username: '',
-  email: ''
+// 状态依赖
+import { useAppStore } from "@/stores/modules/app";
+const appStore = useAppStore();
 
-})
+// 路由管理依赖
+import { useRoute } from "vue-router";
+import router from "@/router";
 
-async function initUser() {
-  const params = {}
-  getUserInfo1Api('v1', 4, params)
-    .then((res) => {
-      user = res.data
-    })
+// 搜索框
+var search = ref("");
+function toSearch() {
+  if (search.value == "") {
+    router.push("/");
+  } else {
+    router.push({
+      path: "/search",
+      query: {
+        body: search.value,
+      },
+    });
+  }
 }
 
-onMounted(() => {
-  initUser()
-})
-
+const handleSelect = (key: string, keyPath: string[]) => {
+  appStore.menu = key;
+  router.push(key);
+};
 </script>
 
-<template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/微信头像.jpg" width="125" height="125" />
-
-    <div class="wrapper">
-      <span>{{ user.username }}</span>
-      <span>{{ user.email }}</span>
-      <nav>
-        <RouterLink to="/">首页</RouterLink>
-        <RouterLink to="/about">关于我</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
-</template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
+<style scoped></style>

@@ -57,12 +57,7 @@ class ArticleModelViewset(ModelViewSet):
         return queryset.order_by(order1)
 
     def get_permissions(self):
-        if self.request.method in permissions.SAFE_METHODS:
-            return (AllowAny,)
-
-        return (IsAuthenticated,)
-
-        # return super().get_permissions()
+        return super().get_permissions()
 
     def get_serializer_class(self):
         return super().get_serializer_class()
