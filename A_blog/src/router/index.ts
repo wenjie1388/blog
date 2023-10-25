@@ -5,7 +5,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'index',
       component: () => import('@/views/index.vue')
     },
     {
@@ -22,6 +22,21 @@ const router = createRouter({
       path: '/article/:id',
       name: 'article',
       component: () => import('@/views/article/index.vue')
+    },
+    {
+      path: '/error_400',
+      name: '400',
+      component: () => import('@/views/error/400.vue')
+    },
+    {
+      path: '/error_404',
+      name: '404',
+      component: () => import('@/views/error/404.vue')
+    },
+    {
+      path: '/error_500',
+      name: '500',
+      component: () => import('@/views/error/500.vue')
     }
   ]
 })

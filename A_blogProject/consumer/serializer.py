@@ -7,9 +7,7 @@ from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.fields import empty
 
 from consumer.models import Consumer as User
-from auths.views import (
-  auth_check_captcha,
-)
+
 
 class LoginBase(serializers.Serializer):
     password = serializers.CharField()

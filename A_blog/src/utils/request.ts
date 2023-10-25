@@ -1,9 +1,9 @@
+import router from '@/router';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ElMessage, ElMessageBox } from 'element-plus';
 // import { getToken } from '@/utils/auth';
 // import { useUserStoreHook } from '@/stores/user';
 import { keysOf } from 'element-plus/es/utils';
-import test from 'node:test';
 
 // 创建 axios 实例
 const request = axios.create({
@@ -42,11 +42,10 @@ request.interceptors.response.use(
       return response;
     } else {
       ElMessage({
-        message: '出错',
+        message: statusText,
         type: 'error'
       });
-      return Promise.reject(new Error( statusText));
-    }
+    };
   },
   (error: any) => {
     ElMessage.error(error);
