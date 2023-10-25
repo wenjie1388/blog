@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
 
-from .views import AuthsCode
+from .views import AuthsViewset
 
 urlpatterns = [
-    path("", AuthsCode.as_view()),
+    re_path(r"^$", AuthsViewset.as_view({"get": "list", "post": "create"})),
 ]

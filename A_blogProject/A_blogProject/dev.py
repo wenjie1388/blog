@@ -3,9 +3,9 @@
 DEBUG_ = True
 
 
-MYSQLNAME = "testDjango"
+MYSQLNAME = "blog"
 MYSQLUSER = "root"
-MYSQLPASSWORD = "123456"
+MYSQLPASSWORD = "root"
 MYSQLHOST = "127.0.0.1"
 MYSQLPORT = 3307
 

@@ -34,7 +34,11 @@ class Article(models.Model):
     )
     body = models.TextField()
     author = models.ForeignKey(
-        Author, on_delete=models.CASCADE, to_field="username", db_column="author"
+        Author,
+        verbose_name="username",
+        on_delete=models.CASCADE,
+        to_field="username",
+        db_column="author",
     )
     date_create = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)

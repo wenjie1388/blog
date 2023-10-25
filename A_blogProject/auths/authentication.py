@@ -26,68 +26,28 @@ from consumer.models import Consumer as User
 #     return None
 
 
-class SessionAuthentication(BaseAuthentication):
+class SessionAuthentication(SessionAuthentication_):
     def authenticate(self, request):
-        # user = getattr(request._request, "user", None)
-
-        sessionid = request._request.COOKIES.get("sessionid", None)
-        # print(sessionid)
-        if not sessionid:
+        user = getattr(request._request, "user", None)
+        if not user or not user.is_active:
             return None
-            # return exceptions.AuthenticationFailed("无认证信息")
-
-        # 获取session
-        try:
-            session = Session.objects.get(session_key=sessionid)
-        except Session.DoesNotExist:
-            return None
-
-            # return exceptions.AuthenticationFailed('')
-            # return exceptions.AuthenticationFailed("认证信息错误")
-
-        # 判断session是否过期
-        if session.expire_date < timezone.now():
-            session.flush()
-            return None
-            # return exceptions.AuthenticationFailed("认证信息过期")
-
-        decode_ = session.get_decoded()
-        user = User.objects.get(id=decode_.get("id"))
-
-        request.user = user.username
+        self.enforce_csrf(request)
         return (user, None)
 
     def enforce_csrf(self, request):
-        """
-        Enforce CSRF validation for session based authentication.
-        """
-
         def dummy_get_response(request):  # pragma: no cover
             return None
 
         check = CSRFCheck(dummy_get_response)
-        # populates request.META['CSRF_COOKIE'], which is used in process_view()
         check.process_request(request)
         reason = check.process_view(request, None, (), {})
         if reason:
-            # CSRF failed, bail with explicit error message
             raise exceptions.PermissionDenied("CSRF Failed: %s" % reason)
 
 
 class TokenAuthentication(BaseAuthentication):
-    """
-    * Hi,辛苦了，等会吃大肉饺子
-    """
-
     keyword = "Token"
     model = None
-
-    """
-    A custom token model may be used, but must have the following properties.
-
-    * key -- The string identifying the token
-    * user -- The user to which the token belongs
-    """
 
     def authenticate(self, request):
         auth = get_authorization_header(request).split()

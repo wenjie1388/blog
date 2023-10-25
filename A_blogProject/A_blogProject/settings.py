@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from .dev import DEBUG_, REDIS1_LOCATION, REDIS0_LOCATION
+from A_blogProject.pro import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -16,7 +16,7 @@ SECRET_KEY = "django-insecure-ctc$6quh7wt_*dz&r#p!@#g)=1cs4f3bqr2%w^50^43fgz1g!7
 DEBUG = DEBUG_
 
 ALLOWED_HOSTS = []
-
+APPEND_SLASH = False
 # AUTH_USER_MODEL = 'django.contrib.auth.models.User'
 # Application definition
 
@@ -70,11 +70,14 @@ WSGI_APPLICATION = "A_blogProject.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": MYSQLNAME,
+        "USER": MYSQLUSER,
+        "PASSWORD": MYSQLPASSWORD,
+        "HOST": MYSQLHOST,
+        "PORT": MYSQLPORT,
     }
 }
 
@@ -116,8 +119,9 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 # 文件和图片上传配置
-MEDIA_ROOT = os.path.join(BASE_DIR, "../upload")
-MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "upload")
+# "/media/"
+MEDIA_URL = "media/"
 
 
 # Default primary key field type
@@ -259,8 +263,12 @@ CACHES = {
         "OPTIONS": {
             "db": "10",
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            # "parser_class": "redis.connection.PythonParser",
-            # "pool_class": "redis.BlockingConnectionPool",
+        },
+    },"captcha": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS1_LOCATION,
+        "OPTIONS": {
+          "CONNECTION_POOL_KWARGS":{"max_connections":100}
         },
     },
 }

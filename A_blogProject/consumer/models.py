@@ -30,28 +30,19 @@ class Consumer(AbstractBaseUser):
     )
     first_name = models.CharField(_("first name"), max_length=150, blank=True)
     last_name = models.CharField(_("last name"), max_length=150, blank=True)
-    email = models.EmailField(_("email address"), unique=True, blank=True, null=True)
+    email = models.EmailField(_("email address"), unique=True, blank=True)
     avarte = models.ImageField(
         _("avarte"),
         upload_to=user_img_path,
         default="image/default/E23A1F.jpg",
     )
-    is_staff = models.BooleanField(
-        _("staff status"),
-        default=False,
-        help_text=_("Designates whether the user can log into this admin site."),
-    )
     is_active = models.BooleanField(
         _("active"),
-        default=True,
-        help_text=_(
-            "Designates whether this user should be treated as active. "
-            "Unselect this instead of deleting accounts."
-        ),
+        default=False,
+        help_text=_("是否激活"),
     )
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
-
-    objects = UserManager()
+    abstract = models.TextField(_("abstract"), max_length=50, blank=True)
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "username"

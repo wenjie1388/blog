@@ -6,8 +6,8 @@ from rest_framework import permissions
 class IsAnonymousUser(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.user:
-            return False
-        return True
+            return True
+        return False
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
@@ -22,4 +22,4 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return obj.author == request.user
+        return obj.username == request.user

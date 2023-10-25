@@ -2,7 +2,7 @@
 
 DEBUG_ = False
 
-MYSQLNAME = "pl"
+MYSQLNAME = "blog"
 MYSQLUSER = "root"
 MYSQLPASSWORD = "root"
 MYSQLHOST = "127.0.0.1"
